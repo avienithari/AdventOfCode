@@ -54,6 +54,40 @@ let part1 () =
   printf "Part 1: %d\n" (List.length total)
 ;;
 
+let rec remove_ith i = function
+  | h :: t -> if i = 0 then t else h :: (remove_ith (i - 1) t)
+  | [] -> []
+
+let is_valid_with_error level =
+  let rec loop cmp = function
+    | h0 :: h1 :: q -> cmp h0 h1 && 1 <= abs (h0 - h1) && abs (h0 - h1) <= 3
+                       && loop cmp (h1 :: q)
+    | [_] -> true
+    | [] -> failwith "unreachable case"
+  in
+
+  let test lst =
+    match lst with
+    | h0 :: h1 :: _ -> if h0 < h1 then loop (<) lst else loop (>) lst
+    | _ -> failwith "level of len 0 or 1"
+  in
+
+  let len = List.length level in
+  Seq.init (len + 1) (fun n -> remove_ith (len - n) level)
+  |> Seq.exists test
+
+let part2 () =
+  let reports = get_data in
+
+  let total = List.filter (fun level ->
+    match level with
+    | [] -> false
+    | _ -> is_valid_with_error level
+  ) reports in
+
+  printf "Part 2: %d\n" (List.length total)
+;;
 
 let () =
   part1 ();
+  part2 ();
