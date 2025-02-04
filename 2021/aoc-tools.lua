@@ -18,11 +18,13 @@ function M.read_file_to_string(path)
 end
 
 ---@param s string
+---@return table
 function M.string_to_table(s)
   local smth = {}
   for line in s:gmatch("%S+") do
     table.insert(smth, line)
   end
+
   return smth
 end
 
@@ -32,6 +34,7 @@ function M.read_file_to_table(path)
 end
 
 ---@param collection table
+---@return any, integer
 function M.get_most_common(collection)
   local counts = {}
   local max_element, max_count = nil, 0
