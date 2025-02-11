@@ -1,7 +1,7 @@
 local aoc = require("aoc-tools")
 
-local example = aoc.read_file_to_table("./example5")
-local puzzle = aoc.read_file_to_table("./input5")
+local example = aoc.read_file_to_table("./example05")
+local puzzle = aoc.read_file_to_table("./input05")
 
 ---@param tbl table
 ---@return table
@@ -159,9 +159,8 @@ end
 ---@return integer
 local function count_overlap(tbl)
   local sum = 0
-  local crosses = tbl
 
-  for _, v in ipairs(crosses) do
+  for _, v in ipairs(tbl) do
     if v >= 2 then
       sum = sum + 1
     end

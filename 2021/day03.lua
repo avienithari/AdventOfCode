@@ -1,7 +1,7 @@
 local aoc = require("aoc-tools")
 
-local example = aoc.read_file_to_table("./example3")
-local numbers = aoc.read_file_to_table("./input3")
+local example = aoc.read_file_to_table("./example03")
+local numbers = aoc.read_file_to_table("./input03")
 
 ---@param data table
 ---@return table (grid)

@@ -1,7 +1,7 @@
 local aoc = require("aoc-tools")
 
-local example = aoc.read_file_to_table("./example2") -- 150
-local instructions = aoc.read_file_to_table("./input2")
+local example = aoc.read_file_to_table("./example02")
+local instructions = aoc.read_file_to_table("./input02")
 
 ---@param input table
 ---@return integer
