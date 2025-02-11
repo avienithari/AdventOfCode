@@ -113,3 +113,61 @@ local function part_1(input)
 end
 
 aoc.print(1, part_1(example), part_1(bingo))
+
+---@param input table
+---@return integer
+local function part_2(input)
+  local game_numbers = aoc.string_split(input[1], ",")
+  local bingo_numbers = {}
+  for _, v in ipairs(game_numbers) do
+    table.insert(bingo_numbers, tonumber(v))
+  end
+
+  local boards = make_grid(aoc.table_slice(input, 2), 25)
+  local present_number_boards = {}
+  for i = 1, #boards do
+    present_number_boards[i] = {}
+  end
+
+  local win_board
+  local win_number
+  local winning_boards = {}
+  for _, number in ipairs(bingo_numbers) do
+    for j, board in ipairs(boards) do
+      check_number(number, board, present_number_boards[j])
+    end
+
+    for j, present_number_board in ipairs(present_number_boards) do
+      if check_win(present_number_board) then
+        winning_boards[j] = true
+
+        local count_win = 0
+        for k = 1, #present_number_boards do
+          if winning_boards[k] then
+            count_win = count_win + 1
+          end
+        end
+
+        if count_win == #present_number_boards then
+          win_board = j
+          break
+        end
+      end
+    end
+    if win_board then
+      win_number = number
+      break
+    end
+  end
+
+  local sum = 0
+  for i = 1, 25 do
+    if not present_number_boards[win_board][i] then
+      sum = sum + boards[win_board][i]
+    end
+  end
+
+  return sum * win_number
+end
+
+aoc.print(2, part_2(example), part_2(bingo))
