@@ -159,7 +159,7 @@ end
 ---@return integer
 local function count_overlap(tbl)
   local sum = 0
-  local crosses = reduce_matrix_dimentions(tbl)
+  local crosses = tbl
 
   for _, v in ipairs(crosses) do
     if v >= 2 then
