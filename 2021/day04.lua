@@ -1,7 +1,7 @@
 local aoc = require("aoc-tools")
 
-local example = aoc.read_file_to_table("./example4") -- 4512 | 1924
-local bingo = aoc.read_file_to_table("./input4") -- 74320 | 17884
+local example = aoc.read_file_to_table("./example04")
+local bingo = aoc.read_file_to_table("./input04")
 
 ---@param tbl table
 ---@param cols integer
