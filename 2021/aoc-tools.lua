@@ -20,12 +20,12 @@ end
 ---@param s string
 ---@return table
 function M.string_to_table(s)
-  local smth = {}
+  local tbl = {}
   for line in s:gmatch("%S+") do
-    table.insert(smth, line)
+    table.insert(tbl, line)
   end
 
-  return smth
+  return tbl
 end
 
 ---@param path string
@@ -48,6 +48,57 @@ function M.get_most_common(collection)
   end
 
   return max_element, max_count
+end
+
+---@param tbl table
+---@param first? integer default: 1
+---@param last? integer default: #tbl
+---@return table
+function M.table_slice(tbl, first, last)
+  local slice = {}
+  for i = first or 1, last or #tbl do
+    table.insert(slice, tbl[i])
+  end
+  return slice
+end
+
+---@param str string
+---@param sep string
+---@return table
+function M.string_split(str, sep)
+  if sep == nil then
+    sep = "%s"
+  end
+
+  local t = {}
+  for s in string.gmatch(str, "([^" .. sep .. "]+)") do
+    table.insert(t, s)
+  end
+
+  return t
+end
+
+---@param tbl table
+---@param cols integer
+---@return table (grid)
+function M.make_grid(tbl, cols)
+  local grid = {}
+  local row = {}
+
+  for _, v in ipairs(tbl) do
+    table.insert(row, tonumber(v))
+
+    if #row == cols then
+      table.insert(grid, row)
+      row = {}
+    end
+  end
+
+  if #row > 0 then
+    table.insert(grid, row)
+  end
+
+  return grid
 end
 
 ---@param part integer
