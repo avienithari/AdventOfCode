@@ -101,6 +101,27 @@ function M.make_grid(tbl, cols)
   return grid
 end
 
+---return a copy of the array collapsed into one dimension.
+---@param grid table
+---@return table
+function M.reduce_matrix_dimentions(grid)
+  local tbl = {}
+
+  local function rec(sub_tbl)
+    for _, value in ipairs(sub_tbl) do
+      if type(value) == "table" then
+        rec(value)
+      else
+        table.insert(tbl, value)
+      end
+    end
+  end
+
+  rec(grid)
+
+  return tbl
+end
+
 ---@param part integer
 ---@param example integer
 ---@param solution integer
