@@ -35,3 +35,48 @@ local function part_1(input)
 end
 
 aoc.print(1, part_1(example), part_1(puzzle))
+
+---@param tbl table
+---@return table
+local function count_occurences(tbl)
+  local map = {}
+
+  for _, v in ipairs(tbl) do
+    local key = tostring(v)
+    if map[key] then
+      map[key] = map[key] + 1
+    else
+      map[key] = 1
+    end
+  end
+
+  return map
+end
+
+---@param input string
+---@return integer
+local function part_2(input)
+  local fish = count_occurences(read(input))
+
+  for _ = 1, 256 do
+    local freq = {}
+    for key, value in pairs(fish) do
+      if key == 0 then
+        freq[6] = (freq[6] or 0) + value
+        freq[8] = value
+      else
+        freq[key - 1] = (freq[key - 1] or 0) + value
+      end
+    end
+    fish = freq
+  end
+
+  local sum = 0
+  for key, _ in pairs(fish) do
+    sum = sum + fish[key]
+  end
+
+  return sum
+end
+
+aoc.print(2, part_2(example), part_2(puzzle))
