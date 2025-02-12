@@ -33,3 +33,26 @@ local function part_1(input)
 end
 
 aoc.print(1, part_1(example), part_1(puzzle))
+
+---@param input table
+---@return number
+local function part_2(input)
+  table.sort(input)
+  local max = input[#input]
+  local fuel = math.huge
+
+  for i = 1, max do
+    local req = 0
+    for _, v in ipairs(input) do
+      local dist = math.abs(i - v)
+      local cost = dist * (dist + 1) / 2
+      req = req + cost
+    end
+
+    fuel = math.min(fuel, req)
+  end
+
+  return fuel
+end
+
+aoc.print(2, part_2(example), part_2(puzzle))
