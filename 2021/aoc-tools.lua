@@ -33,6 +33,34 @@ function M.read_file_to_table(path)
   return M.string_to_table(M.read_file_to_string(path))
 end
 
+---extracts numbers from string and appends them to table
+---@param s string
+---@return table
+function M.string_numbers_to_table(s)
+  local tbl = {}
+
+  for num in string.gmatch(s, "%d+") do
+    table.insert(tbl, tonumber(num))
+  end
+
+  return tbl
+end
+
+---@param nums table
+---@return number
+function M.count_median(nums)
+  table.sort(nums)
+  local med = 0
+
+  if #nums % 2 == 0 then
+    med = (nums[#nums / 2] + nums[(#nums / 2) + 1]) / 2
+  else
+    med = nums[#nums / 2] / 2
+  end
+
+  return med
+end
+
 ---@param collection table
 ---@return any, integer
 function M.get_most_common(collection)
