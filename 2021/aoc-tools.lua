@@ -150,6 +150,25 @@ function M.reduce_matrix_dimentions(grid)
   return tbl
 end
 
+---@param size table
+---@return table
+function M.zeros(size)
+  local rows = size[1]
+  local cols = size[2]
+  local zeros = {}
+
+  for _ = 1, cols do
+    local row = {}
+    for _ = 1, rows do
+      table.insert(row, 0)
+    end
+
+    table.insert(zeros, row)
+  end
+
+  return zeros
+end
+
 ---@param part integer
 ---@param example integer
 ---@param solution integer
