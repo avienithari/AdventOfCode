@@ -111,3 +111,23 @@ local function part_1(input)
 end
 
 aoc.print(1, part_1(example), part_1(puzzle))
+
+---@param input table
+---@return integer
+local function part_2(input)
+  local octos = make_grid(input)
+  local ans = 0
+
+  while true do
+    local step = increment_energy(octos)
+    local count = radiation(step)
+
+    ans = ans + 1
+
+    if count == 100 then
+      return ans
+    end
+  end
+end
+
+aoc.print(2, part_2(example), part_2(puzzle))
