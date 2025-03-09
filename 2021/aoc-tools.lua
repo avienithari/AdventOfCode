@@ -169,6 +169,16 @@ function M.zeros(size)
   return zeros
 end
 
+---@return metatable
+function M.defaultdict()
+  return setmetatable({}, {
+    __index = function(t, key)
+      t[key] = {}
+      return t[key]
+    end,
+  })
+end
+
 ---@param part integer
 ---@param example integer
 ---@param solution integer
