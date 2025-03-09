@@ -170,10 +170,10 @@ function M.zeros(size)
 end
 
 ---@return metatable
-function M.defaultdict()
+function M.defaultdict(default_value)
   return setmetatable({}, {
     __index = function(t, key)
-      t[key] = {}
+      t[key] = default_value()
       return t[key]
     end,
   })
