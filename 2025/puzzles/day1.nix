@@ -15,20 +15,21 @@ let
     L82
   '';
   expectedPart1Test = 3;
+  expectedPart2Test = 6;
 
   aocInput = readFile inputPath;
+
   parseLines = rawData:
     filter (x: isString x && x != "") (
       split "\n" rawData
     );
 
-  startingState = { pos = 50; count = 0; };
+  startingState = { pos = 50; stoppedCount = 0; passedCount = 0; };
 
   processMove = acc: line:
     let
       direction = substring 0 1 line;
-      varStr = substring 1 (stringLength line - 1) line;
-      val = fromJSON varStr;
+      val = fromJSON (substring 1 (stringLength line - 1) line);
 
       delta = if direction == "R" then val else (0 - val);
       rawPosition = acc.pos + delta;
@@ -36,23 +37,47 @@ let
       modulo = rawPosition - ((rawPosition / 100) * 100);
       newPos = if modulo < 0 then modulo + 100 else modulo;
 
-      newCount = if newPos == 0 then acc.count + 1 else acc.count;
+      newStoppedCount =
+        if newPos == 0
+        then acc.stoppedCount + 1 else acc.stoppedCount;
+
+      passed =
+        if direction == "R" then
+          (acc.pos + val) / 100
+        else
+          let
+            distanceToZero = if acc.pos == 0 then 100 else acc.pos;
+          in
+          if val >= distanceToZero then
+            1 + ((val - distanceToZero) / 100)
+          else 0;
     in
     {
       pos = newPos;
-      count = newCount;
+      stoppedCount = newStoppedCount;
+      passedCount = acc.passedCount + passed;
     };
-  testPart1 = (foldl' processMove startingState (parseLines testInput)).count;
+  test = foldl' processMove startingState (parseLines testInput);
   solution = foldl' processMove startingState (parseLines aocInput);
 in
 {
   part1 =
-    if testPart1 != expectedPart1Test
+    if test.stoppedCount != expectedPart1Test
     then
       throw ''
-        [Test FAILED]
-        Got:      ${toString testPart1}
+        [TEST FAILED]
+        Got:      ${toString test.stoppedCount}
         Expected: ${toString expectedPart1Test}
       ''
-    else "Part 1: ${toString solution.count}";
+    else "Part 1: ${toString solution.stoppedCount}";
+
+  part2 =
+    if test.passedCount != expectedPart2Test
+    then
+      throw ''
+        [TEST FAILED]
+        Got:      ${toString test.passedCount}
+        Expected: ${toString expectedPart2Test}
+      ''
+    else "Part 2: ${toString solution.passedCount}";
 }
