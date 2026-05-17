@@ -6,57 +6,90 @@ let
     11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124
   '';
   expectedPart1Test = 1227775554;
+  expectedPart2Test = 4174379265;
 
   aocInput = readFile inputPath;
 
-  isInvalidId = num:
-    let
-      str = toString num;
-      len = stringLength str;
-      half = len / 2;
-      isEven = (half * 2) == len;
+  startingState = { doubledSum = 0; repeatedSum = 0; };
 
-      lhs = substring 0 half str;
-      rhs = substring half half str;
-    in
-    isEven && (lhs == rhs);
-
-  processRanges = rawData:
+  solve = rawString:
     let
-      cleanData = replaceStrings [ "\n" " " ] [ "" "" ] rawData;
+      cleanData = replaceStrings [ "\n" " " ] [ "" "" ] rawString;
       rangeStrings = filter (x: isString x && x != "") (
         split "," cleanData
       );
-      expandRange = rangeStr:
+
+      folder = acc: num:
+        let
+          str = toString num;
+          len = stringLength str;
+          half = len / 2;
+          isEven = (half * 2) == len;
+          lhs = substring 0 half str;
+          rhs = substring half half str;
+
+          isDoubled = isEven && (lhs == rhs);
+
+          doubledStr = str + str;
+          doubledLen = stringLength doubledStr;
+          strippedStr = substring 1 (doubledLen - 2) doubledStr;
+          isRepeated = match ".*${str}.*" strippedStr != null;
+
+          newDoubled =
+            if isDoubled then
+              acc.doubledSum + num else acc.doubledSum;
+          newRepeated =
+            if isRepeated then
+              acc.repeatedSum + num else acc.repeatedSum;
+        in
+        seq newDoubled (seq newRepeated {
+          doubledSum = newDoubled;
+          repeatedSum = newRepeated;
+        });
+
+      processSingleRange = globalAcc: rangeStr:
         let
           bounds = filter isString (split "-" rangeStr);
           minVal = fromJSON (head bounds);
           maxVal = fromJSON (elemAt bounds 1);
           length = maxVal - minVal + 1;
-        in
-        genList (i: minVal + i) length;
-    in
-    concatMap expandRange rangeStrings;
 
-  solve = rawString:
-    let
-      allNumbers = processRanges rawString;
-      invalidIds = filter isInvalidId allNumbers;
+          rangeNums = genList (i: minVal + i) length;
+          rangeResult = foldl' folder startingState rangeNums;
+
+          newGlobalDoubled = globalAcc.doubledSum + rangeResult.doubledSum;
+          newGlobalRepeated = globalAcc.repeatedSum + rangeResult.repeatedSum;
+        in
+        seq newGlobalDoubled (seq newGlobalRepeated {
+          doubledSum = newGlobalDoubled;
+          repeatedSum = newGlobalRepeated;
+        });
     in
-    foldl' add 0 invalidIds;
+    foldl' processSingleRange startingState rangeStrings;
 
   test = solve testInput;
   solution = solve aocInput;
 in
 {
   part1 =
-    if test != expectedPart1Test
+    if test.doubledSum != expectedPart1Test
     then
       throw ''
         [TEST FAILED]
-        Got:      ${toString test}
+        Got:      ${toString test.doubledSum}
         Expected: ${toString expectedPart1Test}
       ''
     else
-      "Part 1: ${toString solution}";
+      "Part 1: ${toString solution.doubledSum}";
+
+  part2 =
+    if test.repeatedSum != expectedPart2Test
+    then
+      throw ''
+        [TEST FAILED]
+        Got:      ${toString test.repeatedSum}
+        Expected: ${toString expectedPart2Test}
+      ''
+    else
+      "Part 2: ${toString solution.repeatedSum}";
 }
