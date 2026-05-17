@@ -30,10 +30,17 @@ let
 
           isDoubled = isEven && (lhs == rhs);
 
-          doubledStr = str + str;
-          doubledLen = stringLength doubledStr;
-          strippedStr = substring 1 (doubledLen - 2) doubledStr;
-          isRepeated = match ".*${str}.*" strippedStr != null;
+          divisors = filter (c: len == (len / c) * c) (
+            genList (i: i + 1) half
+          );
+
+          checkChunk = size: (
+            replaceStrings [ (substring 0 size str) ]
+              [ "" ]
+              str
+          ) == "";
+
+          isRepeated = isDoubled || any checkChunk divisors;
 
           newDoubled =
             if isDoubled then
