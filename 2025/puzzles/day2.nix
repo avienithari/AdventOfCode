@@ -87,7 +87,7 @@ in
         Expected: ${toString expectedPart1Test}
       ''
     else
-      "Part 1: ${toString solution.doubledSum}";
+      solution.doubledSum;
 
   part2 =
     if test.repeatedSum != expectedPart2Test
@@ -98,5 +98,5 @@ in
         Expected: ${toString expectedPart2Test}
       ''
     else
-      "Part 2: ${toString solution.repeatedSum}";
+      solution.repeatedSum;
 }

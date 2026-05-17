@@ -69,7 +69,7 @@ in
         Got:      ${toString test.stoppedCount}
         Expected: ${toString expectedPart1Test}
       ''
-    else "Part 1: ${toString solution.stoppedCount}";
+    else solution.stoppedCount;
 
   part2 =
     if test.passedCount != expectedPart2Test
@@ -79,5 +79,5 @@ in
         Got:      ${toString test.passedCount}
         Expected: ${toString expectedPart2Test}
       ''
-    else "Part 2: ${toString solution.passedCount}";
+    else solution.passedCount;
 }
