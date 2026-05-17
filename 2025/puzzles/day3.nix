@@ -9,6 +9,7 @@ let
     818181911112111
   '';
   expectedPart1Test = 357;
+  expectedPart2Test = 3121910778619;
 
   aocInput = readFile inputPath;
 
@@ -17,51 +18,74 @@ let
       split "\n" rawData
     );
 
-  processBank = line:
+  getMaxJoltage = k: line:
     let
       len = stringLength line;
-      indices = genList (i: len - 1 - i) len;
 
-      folder = acc: idx:
+      folder = stack: idx:
         let
-          char = substring idx 1 line;
+          c = substring idx 1 line;
+          charsLeft = len - idx - 1;
 
-          numStr =
-            if acc.maxRight != "" then
-              char + acc.maxRight else "0";
-          num = fromJSON numStr;
+          popStack = st:
+            let
+              stLen = stringLength st;
+            in
+            if stLen > 0
+              && (substring (stLen - 1) 1 st) < c
+              && (stLen + charsLeft >= k) then
+              popStack (substring 0 (stLen - 1) st)
+            else
+              st;
 
-          newMaxRight =
-            if char > acc.maxRight then char else acc.maxRight;
-          newGlobalMax =
-            if num > acc.globalMax then num else acc.globalMax;
+          popped = popStack stack;
+          poppedLen = stringLength popped;
         in
-        {
-          maxRight = newMaxRight;
-          globalMax = newGlobalMax;
-        };
-      result = foldl' folder { maxRight = ""; globalMax = 0; } indices;
+        if poppedLen < k then popped + c else popped;
+
+      finalString = foldl' folder "" (genList (i: i) len);
     in
-    result.globalMax;
+    fromJSON finalString;
 
   solve = rawData:
     let
       lines = parseLines rawData;
-      joltages = map processBank lines;
+
+      processBank = acc: line:
+        let
+          p1Max = getMaxJoltage 2 line;
+          p2Max = getMaxJoltage 12 line;
+        in
+        {
+          part1Sum = acc.part1Sum + p1Max;
+          part2Sum = acc.part2Sum + p2Max;
+        };
     in
-    foldl' add 0 joltages;
+    foldl' processBank { part1Sum = 0; part2Sum = 0; } lines;
 
   test = solve testInput;
   solution = solve aocInput;
 in
 {
   part1 =
-    if test != expectedPart1Test
+    if test.part1Sum != expectedPart1Test
     then
       throw ''
         [TEST FAILED]
-        Got:      ${toString test}
+        Got:      ${toString test.part1Sum}
         Expected: ${toString expectedPart1Test}
       ''
-    else solution;
+    else
+      solution.part1Sum;
+
+  part2 =
+    if test.part2Sum != expectedPart2Test
+    then
+      throw ''
+        [TEST FAILED]
+        Got:      ${toString test.part2Sum}
+        Expected: ${toString expectedPart2Test}
+      ''
+    else
+      solution.part2Sum;
 }
